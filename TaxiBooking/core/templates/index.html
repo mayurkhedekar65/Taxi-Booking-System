@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+    
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="shrink-0 flex items-center">
+                        <!-- Make the brand a link to the home page -->
+                        <a href="{% url 'index' %}" class="text-2xl font-bold text-gray-900">TaxiApp</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <!-- This is the logic we are adding -->
+                    {% if user.is_authenticated %}
+                        <!-- Show these links if the user is LOGGED IN -->
+                        <span class="px-3 py-2 rounded-md text-sm font-medium text-gray-700">
+                            Hi, {{ user.username }}!
+                        </span>
+                        <a href="#" class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">My Rides</a>
+                        
+                        <!-- Logout Button -->
+                        <form action="{% url 'logout' %}" method="POST" class="ml-4">
+                            {% csrf_token %}
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                                Log Out
+                            </button>
+                        </form>
+
+                    {% else %}
+                        <!-- Show these links if the user is LOGGED OUT -->
+                        <a href="{% url 'login' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Log In
+                        </a>
+                        <a href="{% url 'register' %}" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            Sign Up
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content block -->
+    <main class="py-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% block content %}
+                <!-- Child templates will put their content here -->
+            {% endblock %}
+        </div>
+    </main>
+
+</body>
+</html>
