@@ -18,18 +18,18 @@ def index(request):
     context = {
         'test_message': "Hello from the view!"
     }
-    return render(request, 'index.html', context)
+    return render(request, 'RiderDashboard.html', context)
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('index') # Go to home page after signup
+            return redirect('login.html') # Go to home page after signup
     else:
         form = UserCreationForm()
     
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -40,7 +40,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('index') # Go to home page
+                return redirect('RiderDashboard.html') # Go to home page
     else:
         form = AuthenticationForm()
         

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden p-8 mt-10">
+    <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">Create Your Account</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div class="space-y-4">
+            
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                    <input type="{{ field.field.widget.input_type }}" 
+                           name="{{ field.name }}" 
+                           id="{{ field.id_for_label }}" 
+                           required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    
+                    {% if field.help_text %}
+                        <p class="mt-2 text-xs text-gray-500">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                    
+                    {% for error in field.errors %}
+                        <p class="mt-2 text-xs text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Sign Up
+            </button>
+        </div>
+    </form>
+
+    <p class="text-center text-sm text-gray-600 mt-6">
+        Already have an account? 
+        <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+            Log In
+        </a>
+    </p>
+</div>
+{% endblock %}

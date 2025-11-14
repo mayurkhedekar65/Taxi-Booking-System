@@ -20,4 +20,5 @@ from django.urls import path, include  # <-- Import 'include'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")), # <-- Add this line
+    path('', include('core.urls')),  # <-- Include the core app's URLs
 ]
