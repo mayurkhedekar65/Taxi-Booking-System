@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'TaxiBooking.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pharmafind',
+        'NAME': 'taxi_db',
         'USER': 'root',
         'PASSWORD': '',
         'HOST':'localhost',
