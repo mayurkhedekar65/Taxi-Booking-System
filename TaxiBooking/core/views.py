@@ -8,6 +8,14 @@ from .models import Booking, Driver
 
 @login_required(login_url='login')
 def index(request):
+    """
+    Rider Dashboard: Book a ride and see history.
+    """
+    # 1. Redirect Drivers: Drivers should not see this page.
+    if hasattr(request.user, 'driver'):
+        return redirect('driver_dashboard')
+
+    # 2. Handle Booking (INSERT)
     if request.method == 'POST':
         pickup = request.POST.get('pickup_location')
         dropoff = request.POST.get('dropoff_location')
@@ -21,6 +29,7 @@ def index(request):
             )
             return redirect('index')
 
+    # 3. Handle History (SELECT)
     my_rides = Booking.objects.filter(rider=request.user).order_by('-created_at')
     
     context = {
@@ -30,6 +39,9 @@ def index(request):
 
 @login_required(login_url='login')
 def cancel_ride(request, ride_id):
+    """
+    Rider: Cancel a pending ride (DELETE).
+    """
     if request.method == 'POST':
         try:
             ride = Booking.objects.get(id=ride_id, rider=request.user)
@@ -42,10 +54,24 @@ def cancel_ride(request, ride_id):
 # --- AUTH VIEWS ---
 
 def register_view(request):
+    """
+    Standard User Registration (Rider).
+    """
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+        # Capture the new fields from the form
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        
+        if form.is_valid() and first_name and last_name:
+            # Save user but don't commit to DB yet
+            user = form.save(commit=False)
+            # Add the extra fields
+            user.first_name = first_name
+            user.last_name = last_name
+            # Now save to DB
+            user.save()
+            
             login(request, user)
             return redirect('index') 
     else:
@@ -54,6 +80,9 @@ def register_view(request):
     return render(request, 'signup.html', {'form': form})
 
 def login_view(request):
+    """
+    Login page for both Riders and Drivers.
+    """
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -62,9 +91,13 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                # Redirect drivers to their dashboard, riders to theirs
+                
+                # Intelligent Redirect:
+                # If user is a driver, go to Driver Dashboard
                 if hasattr(user, 'driver'):
                     return redirect('driver_dashboard')
+                
+                # Otherwise, go to Rider Dashboard
                 return redirect('index') 
     else:
         form = AuthenticationForm()
@@ -78,17 +111,25 @@ def logout_view(request):
 # --- DRIVER VIEWS ---
 
 def driver_register_view(request):
+    """
+    Special Registration for Drivers (User + Driver Profile).
+    """
     if request.method == 'POST':
-        # We use the same UserCreationForm for the username/password
         form = UserCreationForm(request.POST)
+        # Capture Name
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
         
-        # We also get the extra driver data directly from the POST request
+        # Capture Vehicle Details
         license_plate = request.POST.get('license_plate')
         vehicle_type = request.POST.get('vehicle_type')
         
-        if form.is_valid() and license_plate and vehicle_type:
-            # 1. Create the User
-            user = form.save()
+        if form.is_valid() and license_plate and vehicle_type and first_name and last_name:
+            # 1. Create the User with Name
+            user = form.save(commit=False)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
             
             # 2. Create the Driver profile linked to that User
             Driver.objects.create(
@@ -97,19 +138,24 @@ def driver_register_view(request):
                 vehicle_type=vehicle_type
             )
             
-            # 3. Log them in and redirect to the Driver Dashboard
             login(request, user)
             return redirect('driver_dashboard')
     else:
         form = UserCreationForm()
     
+    # Renders the correct template
     return render(request, 'DriverRegistrationForm.html', {'form': form})
 
 @login_required(login_url='login')
 def driver_dashboard(request):
+    """
+    Driver Dashboard: See available jobs and active rides.
+    """
+    # Check if user is a driver
     try:
         driver_profile = request.user.driver
     except Driver.DoesNotExist:
+        # If not a driver, send them back to rider dashboard
         return redirect('index')
 
     available_rides = Booking.objects.filter(status='Pending', driver=None).order_by('-created_at')
@@ -123,6 +169,9 @@ def driver_dashboard(request):
 
 @login_required(login_url='login')
 def accept_ride(request, ride_id):
+    """
+    Driver: Accept a pending ride (UPDATE).
+    """
     if request.method == 'POST':
         try:
             driver_profile = request.user.driver
@@ -140,6 +189,9 @@ def accept_ride(request, ride_id):
 
 @login_required(login_url='login')
 def complete_ride(request, ride_id):
+    """
+    Driver: Complete an active ride (UPDATE).
+    """
     if request.method == 'POST':
         try:
             driver_profile = request.user.driver

@@ -1,68 +1,84 @@
 {% extends "base.html" %}
 
-{% block title %}Become a Driver{% endblock %}
+{% block title %}Drive with Us{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden p-8 mt-10">
-    <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">Driver Registration</h2>
-    
-    <form method="POST">
-        {% csrf_token %}
-        <div class="space-y-4">
+<div class="max-w-lg mx-auto">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 relative">
+        <!-- Decorative Top Bar -->
+        <div class="h-2 bg-linear-to-r from-indigo-500 to-purple-600"></div>
+
+        <div class="px-8 py-10">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">Become a Driver</h2>
+                <p class="text-gray-500 mt-2">Turn your miles into money</p>
+            </div>
             
-            <!-- Standard User Fields (Username, Password, confirmation) -->
-            {% for field in form %}
-                <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                    <input type="{{ field.field.widget.input_type }}" 
-                           name="{{ field.name }}" 
-                           id="{{ field.id_for_label }}" 
-                           required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    
-                    {% if field.help_text %}
-                        <p class="mt-2 text-xs text-gray-500">{{ field.help_text|safe }}</p>
-                    {% endif %}
-                    
-                    {% for error in field.errors %}
-                        <p class="mt-2 text-xs text-red-500">{{ error }}</p>
+            <form method="POST" class="space-y-5">
+                {% csrf_token %}
+                
+                <!-- NEW: First Name & Last Name -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" name="first_name" id="first_name" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-gray-50 focus:bg-white">
+                    </div>
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" name="last_name" id="last_name" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-gray-50 focus:bg-white">
+                    </div>
+                </div>
+
+                <!-- User Fields (Username/Password) -->
+                <div class="space-y-4">
+                    {% for field in form %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" required
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-gray-50 focus:bg-white">
+                            {% for error in field.errors %}
+                                <p class="text-xs text-red-500 mt-1">{{ error }}</p>
+                            {% endfor %}
+                        </div>
                     {% endfor %}
                 </div>
-            {% endfor %}
 
-            <!-- Extra Driver Fields -->
-            <div class="pt-4 border-t border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Vehicle Details</h3>
-                
-                <div class="mb-4">
-                    <label for="license_plate" class="block text-sm font-medium text-gray-700">License Plate</label>
-                    <input type="text" name="license_plate" id="license_plate" required placeholder="e.g. GA-01-A-1234"
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <!-- Vehicle Section -->
+                <div class="mt-8 pt-6 border-t border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Vehicle Information</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label for="license_plate" class="block text-sm font-medium text-gray-700 mb-1">License Plate</label>
+                            <input type="text" name="license_plate" id="license_plate" required placeholder="e.g. GA-01-A-1234"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50">
+                        </div>
+
+                        <div class="col-span-2">
+                            <label for="vehicle_type" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Type</label>
+                            <div class="relative">
+                                <select name="vehicle_type" id="vehicle_type" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50 appearance-none">
+                                    <option value="Sedan">Sedan (4 Seater)</option>
+                                    <option value="SUV">SUV (6 Seater)</option>
+                                    <option value="Hatchback">Hatchback (Small)</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label for="vehicle_type" class="block text-sm font-medium text-gray-700">Vehicle Type</label>
-                    <select name="vehicle_type" id="vehicle_type" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        <option value="Sedan">Sedan (4 Seater)</option>
-                        <option value="SUV">SUV (6 Seater)</option>
-                        <option value="Hatchback">Hatchback (Small)</option>
-                    </select>
-                </div>
-            </div>
-
-            <button type="submit"
-                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mt-6">
-                Register as Driver
-            </button>
+                <button type="submit"
+                        class="w-full py-3.5 px-4 bg-gray-900 text-white font-bold rounded-lg shadow-lg hover:bg-black transform hover:-translate-y-0.5 transition-all duration-200 mt-4">
+                    Start Driving
+                </button>
+            </form>
         </div>
-    </form>
-
-    <p class="text-center text-sm text-gray-600 mt-6">
-        Already have an account? 
-        <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
-            Log In
-        </a>
-    </p>
+    </div>
 </div>
 {% endblock %}

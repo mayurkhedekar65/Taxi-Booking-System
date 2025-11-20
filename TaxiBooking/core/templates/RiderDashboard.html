@@ -4,101 +4,144 @@
 
 {% block content %}
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-    
-    <!-- Column 1: Book a Ride Form -->
-    <div class="md:col-span-1">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="p-6">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Book a Ride</h2>
-                <p class="text-sm text-gray-600 mb-6">Enter your pickup and dropoff locations.</p>
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-500 mt-1">Welcome back, ready for your next trip?</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        
+        <!-- Booking Card -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden sticky top-24">
+                <div class="bg-linear-to-r from-indigo-600 to-indigo-700 px-6 py-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Book a Ride
+                    </h2>
+                </div>
                 
-                <form action="." method="POST">
-                    {% csrf_token %}
-                    <div class="space-y-4">
-                        <div>
-                            <label for="pickup" class="block text-sm font-medium text-gray-700">Pickup Location</label>
-                            <input type="text" name="pickup_location" id="pickup" required placeholder="e.g. Central Station"
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        </div>
+                <div class="p-6">
+                    <form action="." method="POST" class="space-y-5">
+                        {% csrf_token %}
                         
                         <div>
-                            <label for="dropoff" class="block text-sm font-medium text-gray-700">Dropoff Location</label>
-                            <input type="text" name="dropoff_location" id="dropoff" required placeholder="e.g. 42 Wallaby Way"
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Pickup</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="h-2 w-2 rounded-full bg-green-500 ring-4 ring-green-100"></span>
+                                </div>
+                                <input type="text" name="pickup_location" required placeholder="Current Location"
+                                       class="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-gray-800 placeholder-gray-400 bg-gray-50 focus:bg-white transition-all">
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex justify-center">
+                           <div class="w-0.5 h-8 bg-gray-200 absolute -top-6 left-4"></div> 
+                        </div>
+
+                        <div class="-mt-2">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Destination</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="h-2 w-2 rounded-full bg-red-500 ring-4 ring-red-100"></span>
+                                </div>
+                                <input type="text" name="dropoff_location" required placeholder="Where to?"
+                                       class="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-gray-800 placeholder-gray-400 bg-gray-50 focus:bg-white transition-all">
+                            </div>
                         </div>
                         
                         <button type="submit"
-                                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Request Ride
+                                class="w-full py-3.5 px-4 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transform active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+                            <span>Request Ride</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
                         </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Column 2: Ride History -->
-    <div class="md:col-span-2">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="p-6">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">My Ride History</h2>
-                
-                <div class="space-y-4">
-                    {% if not my_rides %}
-                        <p class="text-gray-500 italic">You haven't booked any rides yet.</p>
-                    {% endif %}
-
-                    {% for ride in my_rides %}
-                        <div class="p-4 border border-gray-200 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between">
-                            <div class="mb-2 sm:mb-0">
-                                <p class="font-medium text-gray-900">
-                                    <span class="text-indigo-600">To:</span> {{ ride.dropoff_location }}
-                                </p>
-                                <p class="text-sm text-gray-500">
-                                    <span class="font-medium text-gray-700">From:</span> {{ ride.pickup_location }}
-                                </p>
-                                <p class="text-xs text-gray-400 mt-1">
-                                    {{ ride.created_at|date:"M d, Y H:i" }}
-                                </p>
-                            </div>
-                            
-                            <div class="text-right flex items-center justify-end gap-3">
-                                <!-- Status Badge Logic -->
-                                {% if ride.status == 'Pending' %}
-                                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                                        Pending
-                                    </span>
-                                    
-                                    <!-- NEW: Cancel Button (DELETE) -->
-                                    <form action="{% url 'cancel_ride' ride.id %}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this ride?');">
-                                        {% csrf_token %}
-                                        <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium underline ml-2">
-                                            Cancel
-                                        </button>
-                                    </form>
-
-                                {% elif ride.status == 'Accepted' %}
-                                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                        Accepted
-                                    </span>
-                                {% elif ride.status == 'Completed' %}
-                                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                        Completed
-                                    </span>
-                                {% else %}
-                                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-                                        {{ ride.status }}
-                                    </span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-
+                    </form>
                 </div>
             </div>
         </div>
+
+        <!-- History List -->
+        <div class="lg:col-span-2 space-y-4">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                Ride History
+                <span class="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ my_rides|length }}</span>
+            </h3>
+
+            {% if not my_rides %}
+                <div class="bg-white rounded-xl p-10 text-center border border-dashed border-gray-300">
+                    <div class="mx-auto h-12 w-12 text-gray-300 mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900">No rides yet</h3>
+                    <p class="text-gray-500">Your trip history will appear here.</p>
+                </div>
+            {% endif %}
+
+            {% for ride in my_rides %}
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1 grow">
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-400 text-xs font-mono">#{{ ride.id }}</span>
+                                <span class="text-xs text-gray-400">{{ ride.created_at|date:"M d, Y • H:i" }}</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-[20px_1fr] gap-x-2 items-center">
+                                <span class="h-1.5 w-1.5 rounded-full bg-green-500 mx-auto"></span>
+                                <p class="text-sm text-gray-600 truncate">{{ ride.pickup_location }}</p>
+                                
+                                <div class="h-3 w-0.5 bg-gray-200 mx-auto my-0.5"></div>
+                                <div></div>
+                                
+                                <span class="h-1.5 w-1.5 rounded-full bg-red-500 mx-auto"></span>
+                                <p class="text-sm font-semibold text-gray-900 truncate">{{ ride.dropoff_location }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between sm:justify-end gap-4 min-w-[140px]">
+                            <!-- Status Badges -->
+                            {% if ride.status == 'Pending' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5 animate-pulse"></span>
+                                    Pending
+                                </span>
+                                <form action="{% url 'cancel_ride' ride.id %}" method="POST" onsubmit="return confirm('Cancel this request?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors p-1" title="Cancel Ride">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+
+                            {% elif ride.status == 'Accepted' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                                    On the way
+                                </span>
+                            {% elif ride.status == 'Completed' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    Completed
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    {{ ride.status }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
-
 {% endblock %}
