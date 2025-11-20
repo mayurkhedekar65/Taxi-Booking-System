@@ -2,30 +2,42 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from .models import Booking 
 
 # Create your views here.
 
-@login_required(login_url='login') # Protect this page
+@login_required(login_url='login')
 def index(request):
-    """
-    This is the main view for our home page (Rider Dashboard).
-    """
-    # For now, we are just showing the page.
-    # Later, we will add the logic here to:
-    # 1. Handle the 'INSERT' when a user books a ride (POST request).
-    # 2. Handle the 'SELECT' to show the user's ride history (GET request).
+    # 1. Handle Booking (INSERT)
+    if request.method == 'POST':
+        pickup = request.POST.get('pickup_location')
+        dropoff = request.POST.get('dropoff_location')
+        
+        if pickup and dropoff:
+            Booking.objects.create(
+                rider=request.user,
+                pickup_location=pickup,
+                dropoff_location=dropoff,
+                status='Pending'
+            )
+            return redirect('index') # CORRECT: Use URL name 'index'
+
+    # 2. Handle History (SELECT)
+    my_rides = Booking.objects.filter(rider=request.user).order_by('-created_at')
     
     context = {
-        'test_message': "Hello from the view!"
+        'my_rides': my_rides
     }
     return render(request, 'RiderDashboard.html', context)
+
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('login.html') # Go to home page after signup
+            # CORRECT: Redirect to the URL name 'index', NOT 'login.html'
+            return redirect('index') 
     else:
         form = UserCreationForm()
     
@@ -40,7 +52,8 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('RiderDashboard.html') # Go to home page
+                # CORRECT: Redirect to the URL name 'index', NOT 'RiderDashboard.html'
+                return redirect('index') 
     else:
         form = AuthenticationForm()
         
@@ -48,4 +61,4 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login') # Go to login page after logout
+    return redirect('login') # This was already correct

@@ -1,11 +1,13 @@
-...
-from django.contrib import admin
-from django.urls import path, include  # 'include' is already here, good!
-from core.views import register_view, login_view
+from django.urls import path
+from . import views 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("__reload__/", include("django_browser_reload.urls")),
-    path("", register_view, name="register"),  # Registration page
-    path("login/", login_view, name="login"),  # Login page
+    # --- FIX: This was missing! ---
+    # This defines the URL name 'index' that caused your error
+    path("", views.index, name="index"),
+    
+    # Auth URLs
+    path("register/", views.register_view, name="register"),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
 ]
